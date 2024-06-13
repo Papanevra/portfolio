@@ -1,80 +1,79 @@
-flights = [
-    ['Москва - Питер', 41, '22.08.2005', '14000 rub'],
-    ['Москва - Дубай', 0, '29.08.2005', '40000 rub'],
-    ['Москва - Казань', 29, '01.09.2005', '25000 rub']
+flights_data = [
+    ['Москва - Сочи', 35, '15.07.2024', '12000 руб.'],
+    ['Москва - Париж', 10, '20.07.2024', '45000 руб.'],
+    ['Москва - Токио', 25, '05.08.2024', '75000 руб.']
 ]
 
+def show_available_flights():
+    print("===========================================")
+    print("Добро пожаловать в систему бронирования авиабилетов!")
+    print("Список доступных рейсов:")
+    for flight in flights_data:
+        print(f"{flight[0]} - свободных мест: {flight[1]}")
+    print("===========================================")
+
+def find_flight_by_route(route):
+    for flight in flights_data:
+        if route in flight[0]:
+            return flight
+    return None
+
+def get_alternative_flight(excluded_flight):
+    for flight in flights_data:
+        if flight[1] > 0 and flight != excluded_flight:
+            return flight
+    return None
+
 while True:
-    # Вывод информации о доступных рейсах
-    print("===========================================")
-    print("Добро пожаловать в приложение 'Бронирование билетов на самолет'!")
-    print("Доступные рейсы:")
-    for flight in flights:
-        print(f"{flight[0]} - свободные места: {flight[1]}")
-    print("===========================================")
+    show_available_flights()
 
-    # Запрос на выбор рейса
-    chosen_flight = input("Выберите рейс из списка: ")
-    while not any(chosen_flight in flight[0] for flight in flights):
+    selected_route = input("Введите маршрут рейса из списка: ")
+    chosen_flight = find_flight_by_route(selected_route)
+
+    while not chosen_flight:
         print("Такого рейса нет в списке!")
-        chosen_flight = input("Выберите рейс из списка: ")
+        selected_route = input("Попробуйте снова: ")
+        chosen_flight = find_flight_by_route(selected_route)
 
-    # Поиск выбранного рейса
-    selected_flight = None
-    for flight in flights:
-        if chosen_flight in flight[0]:
-            selected_flight = flight
-            break
+    if chosen_flight[1] > 0:
+        print("На данном рейсе есть свободные места. Процесс бронирования начат.")
+        chosen_flight[1] -= 1
+        print("Вы успешно забронировали билет!")
 
-    # Проверка наличия свободных мест
-    if selected_flight and selected_flight[1] > 0:
-        print("Места на рейсе доступны. Вы можете забронировать билет.")
-        selected_flight[1] -= 1
-        print("Билет успешно забронирован!")
-
-        # Вывод информации о бронировании
         print("===========================================")
-        print("Информация о бронировании:")
-        if selected_flight:
-            print(f"Рейс: {selected_flight[0]}")
-            print(f"Дата: {selected_flight[2]}")
-            print(f"Цена: {selected_flight[3]}")
+        print("Детали вашего бронирования:")
+        print(f"Маршрут рейса: {chosen_flight[0]}")
+        print(f"Дата отправления: {chosen_flight[2]}")
+        print(f"Стоимость: {chosen_flight[3]}")
         print("===========================================")
 
     else:
-        print("На выбранный рейс нет доступных мест.")
-
-        # Поиск альтернативного рейса
-        alternative_flight = None
-        for flight in flights:
-            if flight[1] > 0 and flight != selected_flight:
-                alternative_flight = flight
-                break
+        print("К сожалению, на выбранный рейс нет свободных мест.")
+        alternative_flight = get_alternative_flight(chosen_flight)
 
         if alternative_flight:
-            print("Предлагаем альтернативный рейс:")
-            print(
-                f"Рейс: {alternative_flight[0]}, Дата: {alternative_flight[2]}, Цена: {alternative_flight[3]}, Свободные места: {alternative_flight[1]}")
-            choice = input(f"Хотите забронировать альтернативный рейс? (да/нет): ")
-            if choice.lower() == 'да':
+            print("Мы можем предложить вам альтернативный рейс:")
+            print(f"Маршрут: {alternative_flight[0]}, Дата отправления: {alternative_flight[2]}, Стоимость: {alternative_flight[3]}, Свободных мест: {alternative_flight[1]}")
+            alternative_choice = input("Хотите забронировать этот рейс? (да/нет): ")
+            
+            if alternative_choice.lower() == 'да':
                 alternative_flight[1] -= 1
-                print("Билет успешно забронирован!")
+                print("Билет на альтернативный рейс успешно забронирован!")
 
-                # Вывод информации о бронировании
                 print("===========================================")
-                print("Информация о бронировании:")
-                print(f"Рейс: {alternative_flight[0]}")
-                print(f"Дата: {alternative_flight[2]}")
-                print(f"Цена: {alternative_flight[3]}")
+                print("Детали вашего бронирования:")
+                print(f"Маршрут рейса: {alternative_flight[0]}")
+                print(f"Дата отправления: {alternative_flight[2]}")
+                print(f"Стоимость: {alternative_flight[3]}")
                 print("===========================================")
             else:
-                print("Вы отказались от альтернативного рейса.")
+                print("Вы отказались от бронирования альтернативного рейса.")
         else:
             print("К сожалению, нет доступных альтернативных рейсов.")
 
-    # Проверяем, хочет ли пользователь забронировать ещё один билет
-    answer = input("Хотите забронировать ещё один билет? (да/нет): ")
-    if answer.lower() != 'да':
+    another_ticket = input("Хотите забронировать еще один билет? (да/нет): ")
+    
+    if another_ticket.lower() != 'да':
         break
 
-print("Спасибо за использование нашего сервиса!")
+print("Большое спасибо за использование нашей системы бронирования!")
